@@ -1,0 +1,21 @@
+# Render Blueprint
+services:
+  - type: web
+    name: bento-microservices
+    env: node
+    rootDir: bento-microservices-express/bento-microservices-express
+    buildCommand: pnpm install --frozen-lockfile && npx prisma generate && pnpm build
+    startCommand: pnpm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 8080
+      - key: HOST
+        value: 0.0.0.0
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: JWT_SECRET_KEY
+        generateValue: true
