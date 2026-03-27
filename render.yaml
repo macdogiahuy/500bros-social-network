@@ -4,7 +4,7 @@ services:
     name: bento-microservices
     env: node
     rootDir: bento-microservices-express
-    buildCommand: cd bento-microservices-express && pnpm install --frozen-lockfile --prod=false && pnpm exec prisma generate && pnpm build
+    buildCommand: cd bento-microservices-express && pnpm install --frozen-lockfile --prod=false && pnpm exec prisma generate && pnpm exec prisma migrate deploy && pnpm build
     startCommand: cd bento-microservices-express && pnpm start
     envVars:
       - key: NODE_ENV
