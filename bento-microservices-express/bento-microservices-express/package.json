@@ -11,12 +11,12 @@
   "keywords": [],
   "author": "",
   "_moduleAliases": {
-    "@modules": "src/modules",
-    "@shared": "src/shared",
-    "@components": "src/components",
-    "@config": "src/config",
-    "@utils": "src/utils",
-    "@middleware": "src/middleware"
+    "@modules": "dist/modules",
+    "@shared": "dist/shared",
+    "@components": "dist/components",
+    "@config": "dist/config",
+    "@utils": "dist/utils",
+    "@middleware": "dist/middleware"
   },
   "license": "ISC",
   "dependencies": {
