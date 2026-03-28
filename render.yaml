@@ -20,4 +20,4 @@ services:
       - key: JWT_SECRET_KEY
         generateValue: true
       - key: CDN_URL
-        value: https://bento-microservices.onrender.com/uploads
+        value: https://five00bros-social-network.onrender.com/uploads
