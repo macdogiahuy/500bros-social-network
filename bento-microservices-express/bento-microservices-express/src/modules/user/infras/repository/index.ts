@@ -87,7 +87,10 @@ export class PrismaUserQueryRepository implements IQueryRepository<User, UserCon
   }
   
   async list(cond: UserCondDTO, paging: PagingDTO): Promise<Paginated<User>> {
-    const condition = { ...cond, not: { status: 'deleted' } };
+    const condition = {
+      ...cond,
+      status: cond.status ?? { not: 'deleted' as const }
+    };
     const total = await prisma.users.count({ where: condition });
 
     const skip = (paging.page - 1) * paging.limit;

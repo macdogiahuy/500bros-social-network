@@ -8,7 +8,11 @@ function buildApp(): Application {
 
   app.use(urlencoded({ extended: true }));
   app.use(json());
-  app.use(helmet());
+  app.use(
+    helmet({
+      crossOriginResourcePolicy: false
+    })
+  );
   app.use(cors({ origin: '*' }));
   app.set('trust proxy', 1);
 
