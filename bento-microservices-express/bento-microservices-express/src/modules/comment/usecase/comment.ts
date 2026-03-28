@@ -120,10 +120,10 @@ export class CommentUsecase implements ICommentUseCase {
 
     const finalResult = result.data.map((item) => ({
       ...item,
-      user: userMap[item.userId],
-      children: (repliesMap[item.id] || []).map((reply) => ({
+      author: userMap[item.userId],
+      replies: (repliesMap[item.id] || []).map((reply) => ({
         ...reply,
-        user: userMap[reply.userId]
+        author: userMap[reply.userId]
       }))
     }));
 
