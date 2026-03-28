@@ -123,13 +123,16 @@ export class SocketService {
     await redis.subscribe('MESSAGE_REACTION', (message: string) => {
       try {
         const parsed = JSON.parse(message) as { payload?: Record<string, unknown> & { receiverId?: string } };
-        const receiverId = parsed.payload?.receiverId;
+        const payload = parsed.payload;
+        if (!payload) return;
+
+        const receiverId = payload.receiverId;
         if (!receiverId) return;
 
         const targetSocket = this.userSockets.get(receiverId);
         if (!targetSocket) return;
 
-        const { receiverId: _ignored, ...data } = parsed.payload;
+        const { receiverId: _ignored, ...data } = payload;
         this.io.to(targetSocket).emit('message_reaction', data);
       } catch (error) {
         Logger.error(`Error parsing Redis message: ${error}`);

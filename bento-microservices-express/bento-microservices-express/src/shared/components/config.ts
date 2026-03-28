@@ -5,10 +5,12 @@ dotenv.config({
 });
 
 const port = process.env.PORT || '3000';
+const host = process.env.HOST || '0.0.0.0';
 
 export const config = {
   envName: process.env.NODE_ENV,
   port,
+  host,
   jwtSecret: process.env.JWT_SECRET_KEY || '200L@b.io',
   rpc: {
     jwtSecret: process.env.JWT_SECRET_KEY || '200L@b.io',
