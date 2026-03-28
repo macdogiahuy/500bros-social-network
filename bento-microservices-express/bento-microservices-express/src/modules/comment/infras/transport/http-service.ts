@@ -18,6 +18,21 @@ export class CommentHttpService {
     paginatedResponse(data, cond, res);
   }
 
+  async listReplyAPI(req: Request, res: Response) {
+    const parentComment = await this.useCase.findById(req.params.id);
+    const dto: CommentCondDTO = {
+      postId: parentComment.postId,
+      parentId: req.params.id,
+      ...req.query
+    };
+
+    const cond = commentCondDTOSchema.parse(dto);
+    const paging = pagingDTOSchema.parse(req.query);
+    const data = await this.useCase.list(cond, paging);
+
+    paginatedResponse(data, cond, res);
+  }
+
   async createCommentAPI(req: Request, res: Response) {
     const { id } = req.params;
 
@@ -55,7 +70,8 @@ export class CommentHttpService {
   getRoutes(mdlFactory: MdlFactory): Router {
     const router = Router();
 
-    router.get('/comments/:id/replies', this.listCommentAPI.bind(this));
+    router.get('/posts/:id/comments', this.listCommentAPI.bind(this));
+    router.get('/comments/:id/replies', this.listReplyAPI.bind(this));
     router.post('/posts/:id/comments', mdlFactory.auth, this.createCommentAPI.bind(this));
     router.patch('/comments/:id', mdlFactory.auth, this.updateCommentAPI.bind(this));
     router.delete('/comments/:id', mdlFactory.auth, this.deleteCommentAPI.bind(this));
