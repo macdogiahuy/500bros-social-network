@@ -208,10 +208,82 @@ model Users {
   status        users_status? @default(active) @map("status")
   createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt     DateTime      @default(now()) @map("updated_at") @db.Timestamp(0)
+  sentMessages  Message[]     @relation("SentMessages")
+  sentConversations Conversation[] @relation("SentConversations")
+  receivedConversations Conversation[] @relation("ReceivedConversations")
+  conversationParticipations ConversationParticipant[]
+  messageReactions MessageReaction[]
 
   @@index([role], map: "role")
   @@index([status], map: "status")
   @@map("users")
+}
+
+model Conversation {
+  id            String                    @id @map("id") @db.VarChar(36)
+  senderId      String?                   @map("sender_id") @db.VarChar(36)
+  receiverId    String?                   @map("receiver_id") @db.VarChar(36)
+  name          String?                   @map("name") @db.VarChar(100)
+  image         String?                   @map("image") @db.VarChar(255)
+  type          String                    @default("DIRECT") @map("type")
+  createdAt     DateTime                  @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt     DateTime                  @default(now()) @map("updated_at") @db.Timestamp(0)
+  messages      Message[]
+  participants  ConversationParticipant[]
+  sender        Users?                    @relation("SentConversations", fields: [senderId], references: [id])
+  receiver      Users?                    @relation("ReceivedConversations", fields: [receiverId], references: [id])
+
+  @@index([senderId], map: "sender_id")
+  @@index([receiverId], map: "receiver_id")
+  @@map("conversations")
+}
+
+model ConversationParticipant {
+  id             String       @id @default(uuid()) @map("id") @db.VarChar(36)
+  conversationId String       @map("conversation_id") @db.VarChar(36)
+  userId         String       @map("user_id") @db.VarChar(36)
+  joinedAt       DateTime     @default(now()) @map("joined_at")
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user           Users        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([conversationId, userId])
+  @@index([userId], map: "user_id")
+  @@map("conversation_participants")
+}
+
+model Message {
+  id             String            @id @map("id") @db.VarChar(36)
+  conversationId String            @map("conversation_id") @db.VarChar(36)
+  senderId       String            @map("sender_id") @db.VarChar(36)
+  content        String?           @map("content") @db.Text
+  fileUrl        String?           @map("file_url") @db.VarChar(1000)
+  fileName       String?           @map("file_name") @db.VarChar(255)
+  fileSize       Int?              @map("file_size") @db.Int
+  fileType       String?           @map("file_type") @db.VarChar(100)
+  createdAt      DateTime          @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt      DateTime          @default(now()) @map("updated_at") @db.Timestamp(0)
+  conversation   Conversation      @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender         Users             @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  reactions      MessageReaction[]
+
+  @@index([conversationId], map: "conversation_id")
+  @@index([senderId], map: "sender_id")
+  @@map("messages")
+}
+
+model MessageReaction {
+  id        String   @id @map("id") @db.VarChar(36)
+  messageId String   @map("message_id") @db.VarChar(36)
+  userId    String   @map("user_id") @db.VarChar(36)
+  emoji     String   @map("emoji") @db.VarChar(10)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user      Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId])
+  @@index([messageId], map: "message_id")
+  @@index([userId], map: "user_id")
+  @@map("message_reactions")
 }
 
 enum notifications_action {

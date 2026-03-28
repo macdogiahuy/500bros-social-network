@@ -2,6 +2,7 @@ import 'module-alias/register';
 
 import { setupCommentLikeModule } from '@modules/comment-like/module';
 import { setupCommentModule, setupCommentRedisConsumer } from '@modules/comment/module';
+import { setupConversationModule } from '@modules/conversation/module';
 import { setupFollowingModule } from '@modules/following/module';
 import { setupMediaModule } from '@modules/media/module';
 import { setupNotificationConsumer, setupNotificationModule } from '@modules/notification/module';
@@ -13,6 +14,7 @@ import { setupUserConsumer, setupUserModule } from '@modules/user/module';
 import { config } from '@shared/components/config';
 import prisma from '@shared/components/prisma';
 import { RedisClient } from '@shared/components/redis-pubsub/redis';
+import { SocketService } from '@shared/components/socket/socket.service';
 import { ServiceContext } from '@shared/interface';
 import { TokenIntrospectRPCClient } from '@shared/rpc/verify-token';
 import { responseErr } from '@shared/utils/error';
@@ -57,6 +59,7 @@ async function bootServer(port: number) {
     const followingModule = setupFollowingModule(serviceCtx);
     const mediaModule = setupMediaModule();
     const notificationModule = setupNotificationModule(serviceCtx);
+    const conversationModule = setupConversationModule(serviceCtx);
 
     app.use('/v1', userModule);
     app.use('/v1', commentModule);
@@ -68,6 +71,7 @@ async function bootServer(port: number) {
     app.use('/v1', topicModule);
     app.use('/v1', mediaModule);
     app.use('/v1', notificationModule);
+    app.use('/v1', conversationModule);
 
     app.use('/uploads', serveStatic(path.join(__dirname, '../uploads')));
 
@@ -86,8 +90,10 @@ async function bootServer(port: number) {
 
     const server = createServer(app);
 
-    server.listen(port, () => {
-      Logger.success(`Server is running on port ${port}`);
+    SocketService.getInstance().init(server);
+
+    server.listen(port, config.host, () => {
+      Logger.success(`Server is running on ${config.host}:${port}`);
     });
   } catch (e) {
     Logger.error(`Failed to start server: ${(e as Error).message}`);
