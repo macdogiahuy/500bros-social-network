@@ -21,19 +21,3 @@ services:
         generateValue: true
       - key: CDN_URL
         value: https://bento-microservices.onrender.com/uploads
-      - key: VERIFY_TOKEN_URL
-        value: http://127.0.0.1:8080/v1/rpc/introspect
-      - key: POST_SERVICE_URL
-        value: http://127.0.0.1:8080/v1
-      - key: USER_SERVICE_URL
-        value: http://127.0.0.1:8080/v1
-      - key: COMMENT_SERVICE_URL
-        value: http://127.0.0.1:8080/v1
-      - key: FOLLOW_SERVICE_URL
-        value: http://127.0.0.1:8080/v1
-      - key: TOPIC_SERVICE_URL
-        value: http://127.0.0.1:8080/v1
-      - key: POST_LIKE_SERVICE_URL
-        value: http://127.0.0.1:8080/v1
-      - key: POST_SAVED_SERVICE_URL
-        value: http://127.0.0.1:8080/v1
